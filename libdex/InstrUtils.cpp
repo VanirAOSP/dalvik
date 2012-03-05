@@ -356,7 +356,7 @@ static u1 gInstructionFormatTable[kNumPackedOpcodes] = {
     kFmt22b,  kFmt22b,  kFmt22b,  kFmt22b,  kFmt22b,  kFmt22b,  kFmt22b,
     kFmt22b,  kFmt22b,  kFmt22b,  kFmt22c,  kFmt22c,  kFmt21c,  kFmt21c,
     kFmt22c,  kFmt22c,  kFmt22c,  kFmt21c,  kFmt21c,  kFmt00x,  kFmt20bc,
-    kFmt35mi, kFmt3rmi, kFmt35c,  kFmt10x,  kFmt22cs, kFmt22cs, kFmt22cs,
+    kFmt35mi, kFmt3rmi, kFmt3rc,  kFmt10x,  kFmt22cs, kFmt22cs, kFmt22cs,
     kFmt22cs, kFmt22cs, kFmt22cs, kFmt35ms, kFmt3rms, kFmt35ms, kFmt3rms,
     kFmt22c,  kFmt21c,  kFmt21c,  kFmt00x,
     // END(libdex-formats)
