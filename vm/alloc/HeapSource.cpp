@@ -37,8 +37,8 @@ static void setIdealFootprint(size_t max);
 static size_t getMaximumSize(const HeapSource *hs);
 static void trimHeaps();
 
-#define HEAP_UTILIZATION_MAX        1024
-#define DEFAULT_HEAP_UTILIZATION    512     // Range 1..HEAP_UTILIZATION_MAX
+#define HEAP_UTILIZATION_MAX        2048
+#define DEFAULT_HEAP_UTILIZATION    768     // Range 1..HEAP_UTILIZATION_MAX
 #define HEAP_IDEAL_FREE_DEFAULT     (7.2 * 1024 * 1024)
 static unsigned int heapIdeaFree = HEAP_IDEAL_FREE_DEFAULT;
 #define HEAP_MIN_FREE               ((heapIdeaFree) / 4)
@@ -46,7 +46,7 @@ static unsigned int heapIdeaFree = HEAP_IDEAL_FREE_DEFAULT;
 /* How long to wait after a GC before performing a heap trim
  * operation to reclaim unused pages.
  */
-#define HEAP_TRIM_IDLE_TIME_MS (5 * 1000)
+#define HEAP_TRIM_IDLE_TIME_MS (3 * 1000)
 
 /* Start a concurrent collection when free memory falls under this
  * many bytes.
