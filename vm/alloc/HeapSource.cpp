@@ -403,9 +403,9 @@ static bool addNewHeap(HeapSource *hs)
     assert(((size_t)hs->heaps[0].base & (SYSTEM_PAGE_SIZE - 1)) == 0);
 
     if (overhead + hs->minFree >= hs->maximumSize) {
-//        LOGE_HEAP("No room to create any more heaps "
-//                  "(%zd overhead, %zd max)",
- //                 overhead, hs->maximumSize);
+        LOGE_HEAP("No room to create any more heaps "
+                  "(%zd overhead, %zd max)",
+                  overhead, hs->maximumSize);
         return false;
     }
     size_t morecoreStart = SYSTEM_PAGE_SIZE;
