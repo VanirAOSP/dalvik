@@ -814,6 +814,22 @@ int dvmConvertSSARegToDalvik(const CompilationUnit *cUnit, int ssaReg)
 }
 
 /*
+ * Utility function to populate attributes based on the DEX opcode
+ */
+__attribute__((weak)) int dvmGetDexOptAttributes(const DecodedInstruction* instr)
+{
+    int result = 0;
+    if (instr) {
+        Opcode  opcode = instr->opcode;
+        if ((opcode >= OP_NOP) && (opcode < (Opcode)kMirOpLast)) {
+            result = dvmCompilerDataFlowAttributes[opcode];
+        }
+    }
+
+    return result;
+}
+
+/*
  * Utility function to convert encoded SSA register value into Dalvik register
  * and subscript pair. Each SSA register can be used to index the
  * ssaToDalvikMap list to get the subscript[31..16]/dalvik_reg[15..0] mapping.
