@@ -98,7 +98,7 @@ bool dvmHeapStartup()
     gcHeap->clearedReferences = NULL;
 
     if (!dvmCardTableStartup(gDvm.heapMaximumSize, gDvm.heapGrowthLimit)) {
-        LOGE_HEAP("card table startup failed.");
+//        LOGE_HEAP("card table startup failed.");
         return false;
     }
 
@@ -227,9 +227,9 @@ static void *tryMalloc(size_t size)
 //TODO: may want to grow a little bit more so that the amount of free
 //      space is equal to the old free space + the utilization slop for
 //      the new allocation.
-        LOGI_HEAP("Grow heap (frag case) to "
-                "%zu.%03zuMB for %zu-byte allocation",
-                FRACTIONAL_MB(newHeapSize), size);
+//        LOGI_HEAP("Grow heap (frag case) to "
+ //               "%zu.%03zuMB for %zu-byte allocation",
+//                FRACTIONAL_MB(newHeapSize), size);
         return ptr;
     }
 
@@ -240,8 +240,8 @@ static void *tryMalloc(size_t size)
      * been collected and cleared before throwing an OOME.
      */
 //TODO: wait for the finalizers from the previous GC to finish
-    LOGI_HEAP("Forcing collection of SoftReferences for %zu-byte allocation",
-            size);
+//    LOGI_HEAP("Forcing collection of SoftReferences for %zu-byte allocation",
+//            size);
     gcForMalloc(true);
     ptr = dvmHeapSourceAllocAndGrow(size);
     if (ptr != NULL) {
@@ -249,7 +249,7 @@ static void *tryMalloc(size_t size)
     }
 //TODO: maybe wait for finalizers and try one last time
 
-    LOGE_HEAP("Out of memory on a %zd-byte allocation.", size);
+//    LOGE_HEAP("Out of memory on a %zd-byte allocation.", size);
 //TODO: tell the HeapSource to dump its state
     dvmDumpThread(dvmThreadSelf(), false);
 
@@ -452,7 +452,7 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
      */
 
     if (gcHeap->gcRunning) {
-        LOGW_HEAP("Attempted recursive GC");
+//        LOGW_HEAP("Attempted recursive GC");
         return;
     }
 
@@ -469,7 +469,7 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
         oldThreadPriority = os_raiseThreadPriority();
     }
     if (gDvm.preVerify) {
-        LOGV_HEAP("Verifying roots and heap before GC");
+//        LOGV_HEAP("Verifying roots and heap before GC");
         verifyRootsAndHeap();
     }
 
@@ -478,13 +478,13 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
     /* Set up the marking context.
      */
     if (!dvmHeapBeginMarkStep(spec->isPartial)) {
-        LOGE_HEAP("dvmHeapBeginMarkStep failed; aborting");
+//        LOGE_HEAP("dvmHeapBeginMarkStep failed; aborting");
         dvmAbort();
     }
 
     /* Mark the set of objects that are strongly reachable from the roots.
      */
-    LOGD_HEAP("Marking...");
+ //   LOGD_HEAP("Marking...");
     dvmHeapMarkRootSet();
 
     /* dvmHeapScanMarkedObjects() will build the lists of known
@@ -511,7 +511,7 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
      * If we're not collecting soft references, soft-reachable
      * objects will also be marked.
      */
-    LOGD_HEAP("Recursing...");
+//   LOGD_HEAP("Recursing...");
     dvmHeapScanMarkedObjects();
 
     if (spec->isConcurrent) {
@@ -563,7 +563,7 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
     dvmCompilerPerformSafePointChecks();
 #endif
 
-    LOGD_HEAP("Sweeping...");
+//    LOGD_HEAP("Sweeping...");
 
     dvmHeapSweepSystemWeaks();
 
@@ -575,7 +575,7 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
     dvmHeapSourceSwapBitmaps();
 
     if (gDvm.postVerify) {
-        LOGV_HEAP("Verifying roots and heap after GC");
+ //       LOGV_HEAP("Verifying roots and heap after GC");
         verifyRootsAndHeap();
     }
 
@@ -586,13 +586,13 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
     }
     dvmHeapSweepUnmarkedObjects(spec->isPartial, spec->isConcurrent,
                                 &numObjectsFreed, &numBytesFreed);
-    LOGD_HEAP("Cleaning up...");
+ //   LOGD_HEAP("Cleaning up...");
     dvmHeapFinishMarkStep();
     if (spec->isConcurrent) {
         dvmLockHeap();
     }
 
-    LOGD_HEAP("Done.");
+//    LOGD_HEAP("Done.");
 
     /* Now's a good time to adjust the heap size, since
      * we know what our utilization is.
@@ -606,11 +606,11 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
     currFootprint = dvmHeapSourceGetValue(HS_FOOTPRINT, NULL, 0);
 
     dvmMethodTraceGCEnd();
-    LOGV_HEAP("GC finished");
+//    LOGV_HEAP("GC finished");
 
     gcHeap->gcRunning = false;
 
-    LOGV_HEAP("Resuming threads");
+//    LOGV_HEAP("Resuming threads");
 
     if (spec->isConcurrent) {
         /*
@@ -639,7 +639,7 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
 
     gcEnd = dvmGetRelativeTimeMsec();
     percentFree = 100 - (size_t)(100.0f * (float)currAllocated / currFootprint);
-    if (!spec->isConcurrent) {
+/*    if (!spec->isConcurrent) {
         u4 markSweepTime = dirtyEnd - rootStart;
         u4 gcTime = gcEnd - rootStart;
         bool isSmall = numBytesFreed > 0 && numBytesFreed < 1024;
@@ -662,17 +662,17 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
              percentFree,
              currAllocated / 1024, currFootprint / 1024,
              rootTime, dirtyTime, gcTime);
-    }
+    }*/
     if (gcHeap->ddmHpifWhen != 0) {
-        LOGD_HEAP("Sending VM heap info to DDM");
+//        LOGD_HEAP("Sending VM heap info to DDM");
         dvmDdmSendHeapInfo(gcHeap->ddmHpifWhen, false);
     }
     if (gcHeap->ddmHpsgWhen != 0) {
-        LOGD_HEAP("Dumping VM heap to DDM");
+//        LOGD_HEAP("Dumping VM heap to DDM");
         dvmDdmSendHeapSegments(false, false);
     }
     if (gcHeap->ddmNhsgWhen != 0) {
-        LOGD_HEAP("Dumping native heap to DDM");
+//        LOGD_HEAP("Dumping native heap to DDM");
         dvmDdmSendHeapSegments(false, true);
     }
 }
@@ -710,7 +710,7 @@ bool dvmWaitForConcurrentGcToComplete()
     }
     u4 end = dvmGetRelativeTimeMsec();
     if (end - start > 0) {
-        ALOGD("WAIT_FOR_CONCURRENT_GC blocked %ums", end - start);
+//        ALOGD("WAIT_FOR_CONCURRENT_GC blocked %ums", end - start);
     }
     return waited;
 }
