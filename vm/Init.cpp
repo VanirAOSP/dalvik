@@ -1245,7 +1245,7 @@ static void setCommandLineDefaults()
     // to allocate into before a GC occurs. Min free and max free
     // force the free memory to never be smaller than min free or
     // larger than max free.
-    gDvm.heapTargetUtilization = 0.5;
+    gDvm.heapTargetUtilization = 0.75;
     gDvm.heapMaxFree = 2 * 1024 * 1024;
     gDvm.heapMinFree = gDvm.heapMaxFree / 4;
 
