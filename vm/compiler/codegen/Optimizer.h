@@ -30,6 +30,8 @@ enum optControlVector {
     kSuppressLoads,
     kMethodInlining,
     kMethodJit,
+    kShiftArithmetic,
+    kMultiplyArithmetic,
 };
 
 /* Forward declarations */
