@@ -31,6 +31,12 @@
 #include <limits.h>
 #include <errno.h>
 
+/* Disable dalvikVM logcat entires
+ * ALOD is used so these entires only show up on user_debug build arent useful
+ * on shipping roms for anything but debuging dalvik.
+ */
+static const bool DEBUG = false;
+
 static const GcSpec kGcForMallocSpec = {
     true,  /* isPartial */
     false,  /* isConcurrent */
@@ -639,30 +645,36 @@ void dvmCollectGarbageInternal(const GcSpec* spec)
 
     gcEnd = dvmGetRelativeTimeMsec();
     percentFree = 100 - (size_t)(100.0f * (float)currAllocated / currFootprint);
-/*    if (!spec->isConcurrent) {
+    if (!spec->isConcurrent) {
         u4 markSweepTime = dirtyEnd - rootStart;
         u4 gcTime = gcEnd - rootStart;
         bool isSmall = numBytesFreed > 0 && numBytesFreed < 1024;
-        ALOGD("%s freed %s%zdK, %d%% free %zdK/%zdK, paused %ums, total %ums",
-             spec->reason,
-             isSmall ? "<" : "",
-             numBytesFreed ? MAX(numBytesFreed / 1024, 1) : 0,
-             percentFree,
-             currAllocated / 1024, currFootprint / 1024,
-             markSweepTime, gcTime);
+        if(DEBUG) {
+            ALOGD("%s freed %s%zdK, %d%% free %zdK/%zdK, paused %ums, total %ums",
+                spec->reason,
+                isSmall ? "<" : "",
+                numBytesFreed ? MAX(numBytesFreed / 1024, 1) : 0,
+                percentFree,
+                currAllocated / 1024, currFootprint / 1024,
+                markSweepTime, gcTime);
+        }
     } else {
         u4 rootTime = rootEnd - rootStart;
         u4 dirtyTime = dirtyEnd - dirtyStart;
         u4 gcTime = gcEnd - rootStart;
         bool isSmall = numBytesFreed > 0 && numBytesFreed < 1024;
-        ALOGD("%s freed %s%zdK, %d%% free %zdK/%zdK, paused %ums+%ums, total %ums",
-             spec->reason,
-             isSmall ? "<" : "",
-             numBytesFreed ? MAX(numBytesFreed / 1024, 1) : 0,
-             percentFree,
-             currAllocated / 1024, currFootprint / 1024,
-             rootTime, dirtyTime, gcTime);
-    }*/
+
+        if (DEBUG) { 
+            ALOGD("%s freed %s%zdK, %d%% free %zdK/%zdK, paused %ums+%ums, total %ums",
+                spec->reason,
+                isSmall ? "<" : "",
+                numBytesFreed ? MAX(numBytesFreed / 1024, 1) : 0,
+                percentFree,
+                currAllocated / 1024, currFootprint / 1024,
+                rootTime, dirtyTime, gcTime);
+        }
+    }
+
     if (gcHeap->ddmHpifWhen != 0) {
 //        LOGD_HEAP("Sending VM heap info to DDM");
         dvmDdmSendHeapInfo(gcHeap->ddmHpifWhen, false);
@@ -709,8 +721,11 @@ bool dvmWaitForConcurrentGcToComplete()
         dvmChangeStatus(self, oldStatus);
     }
     u4 end = dvmGetRelativeTimeMsec();
-    if (end - start > 0) {
-//        ALOGD("WAIT_FOR_CONCURRENT_GC blocked %ums", end - start);
+
+    if(DEBUG) {
+        if (end - start > 0) {
+            ALOGD("WAIT_FOR_CONCURRENT_GC blocked %ums", end - start);
+        }
     }
     return waited;
 }
