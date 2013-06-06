@@ -95,7 +95,7 @@ char* dexOptGenerateCacheFileName(const char* fileName, const char* subFileName)
      */
     dataRoot = getenv("ANDROID_DATA");
     if (dataRoot == NULL)
-        dataRoot = "/data";
+        dataRoot = dataRoot;
     snprintf(nameBuf, kBufLen, "%s/%s", dataRoot, kCacheDirectoryName);
 
     /* Tack on the file name for the actual cache file path.
