@@ -19,7 +19,9 @@
 #include <errno.h>
 #include <cutils/ashmem.h>
 
+#ifndef __STDINT_LIMITS
 #define SIZE_MAX UINT_MAX  // TODO: get SIZE_MAX from stdint.h
+#endif
 
 #include "Dalvik.h"
 #include "alloc/DlMalloc.h"
