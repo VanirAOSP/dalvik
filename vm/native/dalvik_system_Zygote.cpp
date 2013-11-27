@@ -18,6 +18,7 @@
  * dalvik.system.Zygote
  */
 #include "Dalvik.h"
+#include "Thread.h"
 #include "native/InternalNativePriv.h"
 
 #include <selinux/android.h>
@@ -43,6 +44,7 @@
 #include <sched.h>
 #include <sys/utsname.h>
 #include <sys/capability.h>
+#include <sys/resource.h>
 
 #if defined(HAVE_PRCTL)
 # include <sys/prctl.h>
@@ -432,21 +434,22 @@ static void enableDebugFeatures(u4 debugFlags)
 static int setCapabilities(int64_t permitted, int64_t effective)
 {
 #ifdef HAVE_ANDROID_OS
-    struct __user_cap_header_struct capheader;
-    struct __user_cap_data_struct capdata;
-
+    __user_cap_header_struct capheader;
     memset(&capheader, 0, sizeof(capheader));
-    memset(&capdata, 0, sizeof(capdata));
-
-    capheader.version = _LINUX_CAPABILITY_VERSION;
+    capheader.version = _LINUX_CAPABILITY_VERSION_3;
     capheader.pid = 0;
 
-    capdata.effective = effective;
-    capdata.permitted = permitted;
+    __user_cap_data_struct capdata[2];
+    memset(&capdata, 0, sizeof(capdata));
+    capdata[0].effective = effective;
+    capdata[1].effective = effective >> 32;
+    capdata[0].permitted = permitted;
+    capdata[1].permitted = permitted >> 32;
 
-    ALOGV("CAPSET perm=%llx eff=%llx", permitted, effective);
-    if (capset(&capheader, &capdata) != 0)
+    if (capset(&capheader, &capdata[0]) == -1) {
+        ALOGE("capset(perm=%llx, eff=%llx) failed: %s", permitted, effective, strerror(errno));
         return errno;
+    }
 #endif /*HAVE_ANDROID_OS*/
 
     return 0;
@@ -711,6 +714,13 @@ static pid_t forkAndSpecializeCommon(const u4* args, bool isSystemServer)
         if (err < 0) {
             ALOGE("cannot set SELinux context: %s\n", strerror(errno));
             dvmAbort();
+        }
+
+        // Set the comm to a nicer name.
+        if (isSystemServer && niceName == NULL) {
+            dvmSetThreadName("system_server");
+        } else {
+            dvmSetThreadName(niceName);
         }
         // These free(3) calls are safe because we know we're only ever forking
         // a single-threaded process, so we know no other thread held the heap

@@ -26,7 +26,7 @@
 #
 
 LOCAL_CFLAGS += -fstrict-aliasing -Wstrict-aliasing=2
-LOCAL_CFLAGS += -Wall -Wextra -Wno-unused-parameter
+LOCAL_CFLAGS += -Wall -Wextra -Wno-unused-parameter -Wno-unused-but-set-variable
 LOCAL_CFLAGS += -DARCH_VARIANT=\"$(dvm_arch_variant)\"
 
 ifneq ($(strip $(LOCAL_CLANG)),true)
@@ -294,6 +294,10 @@ ifeq ($(dvm_arch),mips)
 		compiler/codegen/mips/GlobalOptimizations.cpp \
 		compiler/template/out/CompilerTemplateAsm-$(dvm_arch_variant).S
   endif
+
+  ifeq ($(strip $(ARCH_HAVE_ALIGNED_DOUBLES)),true)
+    LOCAL_CFLAGS += -DARCH_HAVE_ALIGNED_DOUBLES
+  endif
 endif
 
 ifeq ($(dvm_arch),x86)
@@ -302,10 +306,10 @@ ifeq ($(dvm_arch),x86)
     LOCAL_CFLAGS += -DDVM_JMP_TABLE_MTERP=1 \
                     -DMTERP_STUB
     LOCAL_SRC_FILES += \
-		arch/$(dvm_arch_variant)/Call386ABI.S \
-		arch/$(dvm_arch_variant)/Hints386ABI.cpp \
-		mterp/out/InterpC-$(dvm_arch_variant).cpp \
-		mterp/out/InterpAsm-$(dvm_arch_variant).S
+		arch/$(dvm_arch)/Call386ABI.S \
+		arch/$(dvm_arch)/Hints386ABI.cpp \
+		mterp/out/InterpC-$(dvm_arch).cpp \
+		mterp/out/InterpAsm-$(dvm_arch).S
     ifeq ($(WITH_JIT),true)
       LOCAL_CFLAGS += -DARCH_IA32
       LOCAL_SRC_FILES += \
