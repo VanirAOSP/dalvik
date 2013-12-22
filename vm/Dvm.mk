@@ -271,6 +271,7 @@ ifeq ($(dvm_arch),arm)
     LOCAL_SHARED_LIBRARIES += libqc-opt
     LOCAL_CFLAGS += -DWITH_QC_PERF
   endif
+  LOCAL_CFLAGS += -DHAVE_HALFWORD_ATOMIC_MEMMOVE
   endif
 endif
 
