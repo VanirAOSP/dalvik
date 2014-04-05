@@ -142,18 +142,20 @@ public class CfTranslator {
         ConstantPool constantPool = cf.getConstantPool();
         int constantPoolSize = constantPool.size();
 
-        for (int i = 0; i < constantPoolSize; i++) {
-            Constant constant = constantPool.getOrNull(i);
-            if (constant instanceof CstMethodRef) {
-                methodIdsSection.intern((CstBaseMethodRef) constant);
-            } else if (constant instanceof CstInterfaceMethodRef) {
-                methodIdsSection.intern(((CstInterfaceMethodRef) constant).toMethodRef());
-            } else if (constant instanceof CstFieldRef) {
-                fieldIdsSection.intern((CstFieldRef) constant);
-            } else if (constant instanceof CstEnumRef) {
-                fieldIdsSection.intern(((CstEnumRef) constant).getFieldRef());
-            } else if (constant instanceof CstType) {
-                typeIdsSection.intern((CstType) constant);
+        synchronized (dexFile) {
+            for (int i = 0; i < constantPoolSize; i++) {
+                Constant constant = constantPool.getOrNull(i);
+                if (constant instanceof CstMethodRef) {
+                    methodIdsSection.intern((CstBaseMethodRef) constant);
+                } else if (constant instanceof CstInterfaceMethodRef) {
+                    methodIdsSection.intern(((CstInterfaceMethodRef) constant).toMethodRef());
+                } else if (constant instanceof CstFieldRef) {
+                    fieldIdsSection.intern((CstFieldRef) constant);
+                } else if (constant instanceof CstEnumRef) {
+                    fieldIdsSection.intern(((CstEnumRef) constant).getFieldRef());
+                } else if (constant instanceof CstType) {
+                    typeIdsSection.intern((CstType) constant);
+                }
             }
         }
 
@@ -195,7 +197,9 @@ public class CfTranslator {
                 if (annotations.size() != 0) {
                     out.addFieldAnnotations(field, annotations);
                 }
-                fieldIdsSection.intern(field);
+                synchronized (fieldIdsSection) {
+                    fieldIdsSection.intern(field);
+                }
             } catch (RuntimeException ex) {
                 String msg = "...while processing " + one.getName().toHuman() +
                     " " + one.getDescriptor().toHuman();
@@ -364,7 +368,9 @@ public class CfTranslator {
                 if (list.size() != 0) {
                     out.addParameterAnnotations(meth, list);
                 }
-                methodIds.intern(meth);
+                synchronized (methodIds) {
+                  methodIds.intern(meth);
+                }
             } catch (RuntimeException ex) {
                 String msg = "...while processing " + one.getName().toHuman() +
                     " " + one.getDescriptor().toHuman();

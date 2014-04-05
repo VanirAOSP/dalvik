@@ -20,7 +20,6 @@ import com.android.dx.rop.cst.Constant;
 import com.android.dx.rop.cst.CstBaseMethodRef;
 import com.android.dx.util.AnnotatedOutput;
 import com.android.dx.util.Hex;
-
 import java.util.Collection;
 import java.util.TreeMap;
 
@@ -95,7 +94,7 @@ public final class MethodIdsSection extends MemberIdsSection {
      * @param method {@code non-null;} the reference to intern
      * @return {@code non-null;} the interned reference
      */
-    public synchronized MethodIdItem intern(CstBaseMethodRef method) {
+    public MethodIdItem intern(CstBaseMethodRef method) {
         if (method == null) {
             throw new NullPointerException("method == null");
         }
