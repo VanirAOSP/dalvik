@@ -3340,17 +3340,6 @@ static bool createIftable(ClassObject* clazz)
             LOGVV("MIRANDA %d: %s.%s", i,
                 mirandaList[i]->clazz->descriptor, mirandaList[i]->name);
         }
-        if (mirandaCount > kManyMirandas) {
-            /*
-             * Some obfuscators like to create an interface with a huge
-             * pile of methods, declare classes as implementing it, and then
-             * only define a couple of methods.  This leads to a rather
-             * massive collection of Miranda methods and a lot of wasted
-             * space, sometimes enough to blow out the LinearAlloc cap.
-             */
-            ALOGD("Note: class %s has %d unimplemented (abstract) methods",
-                clazz->descriptor, mirandaCount);
-        }
 
         /*
          * We found methods in one or more interfaces for which we do not
