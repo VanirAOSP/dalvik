@@ -3333,7 +3333,6 @@ static bool createIftable(ClassObject* clazz)
     }
 
     if (mirandaCount != 0) {
-        static const int kManyMirandas = 150;   /* arbitrary */
         Method* newVirtualMethods;
         Method* meth;
         int oldMethodCount, oldVtableCount;
