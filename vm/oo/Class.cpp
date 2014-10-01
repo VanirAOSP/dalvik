@@ -23,7 +23,6 @@
 
 #include "Dalvik.h"
 #include "libdex/DexClass.h"
-#include "libdex/ZipArchive.h"
 #include "analysis/Optimize.h"
 
 #include <stdlib.h>
@@ -893,7 +892,6 @@ StringObject* dvmGetBootPathResource(const char* name, int idx)
     const int kUrlOverhead = 13;        // worst case for Jar URL
     const ClassPathEntry* cpe = gDvm.bootClassPath;
     StringObject* urlObj = NULL;
-    ZipEntry entry;
 
     ALOGV("+++ searching for resource '%s' in %d(%s)",
         name, idx, cpe[idx].fileName);
@@ -912,7 +910,7 @@ StringObject* dvmGetBootPathResource(const char* name, int idx)
     case kCpeJar:
         {
             JarFile* pJarFile = (JarFile*) cpe->ptr;
-            if (dexZipFindEntry(pJarFile->archive, name, &entry) != 0)
+            if (dexZipFindEntry(&pJarFile->archive, name) == NULL)
                 goto bail;
             sprintf(urlBuf, "jar:file://%s!/%s", cpe->fileName, name);
         }
@@ -3333,6 +3331,7 @@ static bool createIftable(ClassObject* clazz)
     }
 
     if (mirandaCount != 0) {
+        static const int kManyMirandas = 150;   /* arbitrary */
         Method* newVirtualMethods;
         Method* meth;
         int oldMethodCount, oldVtableCount;
@@ -3340,6 +3339,17 @@ static bool createIftable(ClassObject* clazz)
         for (int i = 0; i < mirandaCount; i++) {
             LOGVV("MIRANDA %d: %s.%s", i,
                 mirandaList[i]->clazz->descriptor, mirandaList[i]->name);
+        }
+        if (mirandaCount > kManyMirandas) {
+            /*
+             * Some obfuscators like to create an interface with a huge
+             * pile of methods, declare classes as implementing it, and then
+             * only define a couple of methods.  This leads to a rather
+             * massive collection of Miranda methods and a lot of wasted
+             * space, sometimes enough to blow out the LinearAlloc cap.
+             */
+            ALOGD("Note: class %s has %d unimplemented (abstract) methods",
+                clazz->descriptor, mirandaCount);
         }
 
         /*

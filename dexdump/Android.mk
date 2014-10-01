@@ -23,6 +23,8 @@ dexdump_src_files := \
 dexdump_c_includes := \
 		dalvik
 
+dexdump_shared_libraries :=
+
 dexdump_static_libraries := \
 		libdex
 
@@ -37,7 +39,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := dexdump
 LOCAL_SRC_FILES := $(dexdump_src_files)
 LOCAL_C_INCLUDES := $(dexdump_c_includes)
-LOCAL_SHARED_LIBRARIES := libz liblog libutils
+LOCAL_SHARED_LIBRARIES := $(dexdump_shared_libraries) libz liblog
 LOCAL_STATIC_LIBRARIES := $(dexdump_static_libraries)
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
 LOCAL_MODULE_TAGS := optional
@@ -49,7 +51,6 @@ LOCAL_MODULE := libdexdump_static
 LOCAL_SRC_FILES := $(dexdump_src_files)
 LOCAL_C_INCLUDES := $(dexdump_c_includes)
 LOCAL_STATIC_LIBRARIES := $(dexdump_static_libraries)
-LOCAL_SHARED_LIBRARIES := libutils
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_STATIC_LIBRARY)
 
@@ -66,7 +67,8 @@ LOCAL_MODULE := dexdump
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := $(dexdump_src_files)
 LOCAL_C_INCLUDES := $(dexdump_c_includes)
-LOCAL_STATIC_LIBRARIES := $(dexdump_static_libraries) liblog libutils
+LOCAL_SHARED_LIBRARIES := $(dexdump_shared_libraries)
+LOCAL_STATIC_LIBRARIES := $(dexdump_static_libraries) liblog
 
 ifneq ($(strip $(USE_MINGW)),)
 LOCAL_STATIC_LIBRARIES += libz

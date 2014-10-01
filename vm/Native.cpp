@@ -29,8 +29,6 @@
 static void freeSharedLibEntry(void* ptr);
 static void* lookupSharedLibMethod(const Method* method);
 
-#undef ALOGD
-#define ALOGD(...) {}
 
 /*
  * Initialize the native code loader.
