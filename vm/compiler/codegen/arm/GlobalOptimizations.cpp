@@ -69,7 +69,7 @@ static void applyRedundantBranchElimination(CompilationUnit *cUnit)
     }
 }
 
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
 /*
  * Perform a pass to hoist all frame pointer load instructions that
  * are independent, outside the loop.
@@ -269,7 +269,7 @@ void dvmCompilerApplyGlobalOptimizations(CompilationUnit *cUnit)
 {
     applyRedundantBranchElimination(cUnit);
 
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
     if (cUnit->jitMode == kJitLoop) {
         applyLoopLoadHoisting(cUnit);
     }

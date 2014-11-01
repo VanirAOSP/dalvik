@@ -1215,7 +1215,7 @@ static void storePair(CompilationUnit *cUnit, int base, int lowReg, int highReg)
     storeBaseDispWide(cUnit, base, 0, lowReg, highReg);
 }
 
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
 static void storePair(CompilationUnit *cUnit, int base, int displacement, int lowReg, int highReg)
 {
     storeBaseDispWide(cUnit, base, displacement, lowReg, highReg);
@@ -1227,7 +1227,7 @@ static void loadPair(CompilationUnit *cUnit, int base, int lowReg, int highReg)
     loadBaseDispWide(cUnit, NULL, base, 0, lowReg, highReg, INVALID_SREG);
 }
 
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
 static void loadPair(CompilationUnit *cUnit, int base, int displacement, int lowReg, int highReg)
 {
     loadBaseDispWide(cUnit, NULL, base, displacement, lowReg, highReg, INVALID_SREG);

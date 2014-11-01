@@ -476,7 +476,7 @@ static void applyLoadHoisting(CompilationUnit *cUnit,
     }
 }
 
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
 /*
  * Find all lsl/lsr and add that can be replaced with a
  * combined lsl/lsr + add
@@ -618,7 +618,7 @@ void dvmCompilerApplyLocalOptimizations(CompilationUnit *cUnit, LIR *headLIR,
     if (!(gDvmJit.disableOpt & (1 << kLoadHoisting))) {
         applyLoadHoisting(cUnit, (ArmLIR *) headLIR, (ArmLIR *) tailLIR);
     }
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
     if (!(gDvmJit.disableOpt & (1 << kShiftArithmetic))) {
         applyShiftArithmeticOpts(cUnit, (ArmLIR *) headLIR, (ArmLIR* ) tailLIR);
     }

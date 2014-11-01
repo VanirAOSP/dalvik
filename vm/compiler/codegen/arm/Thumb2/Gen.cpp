@@ -309,12 +309,12 @@ static void genMonitorExit(CompilationUnit *cUnit, MIR *mir)
     // Is lock unheld on lock or held by us (==threadId) on unlock?
     opRegRegImm(cUnit, kOpAnd, r7, r2,
                 (LW_HASH_STATE_MASK << LW_HASH_STATE_SHIFT));
-#ifdef WITH_QC_PERF
+#ifdef TARGET_HAVE_QC_PERF
     opRegImm(cUnit, kOpLsl, r3, LW_LOCK_OWNER_SHIFT); // Align owner
 #endif
     newLIR3(cUnit, kThumb2Bfc, r2, LW_HASH_STATE_SHIFT,
             LW_LOCK_OWNER_SHIFT - 1);
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
     opRegRegRegShift(cUnit, kOpSub, r2, r2, r3, encodeShift(kArmLsl, LW_LOCK_OWNER_SHIFT)); // Align owner
 #else
     SET_CCODE;
@@ -483,7 +483,7 @@ static void genMultiplyByShiftAndReverseSubtract(CompilationUnit *cUnit,
             encodeShift(kArmLsl, lit));
 }
 
-#ifndef WITH_QC_PERF
+#ifndef TARGET_HAVE_QC_PERF
 /*
  * Generate array load.
  * For wide array access using scale, combine add with shift.

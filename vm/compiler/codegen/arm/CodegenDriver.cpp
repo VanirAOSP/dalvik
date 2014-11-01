@@ -414,7 +414,7 @@ static void genIPut(CompilationUnit *cUnit, MIR *mir, OpSize size,
     }
 }
 
-#ifdef WITH_QC_PERF
+#ifdef TARGET_HAVE_QC_PERF
 __attribute__((weak)) bool genArrayGetThumb2(CompilationUnit *cUnit, MIR *mir, OpSize size,
                         RegLocation rlArray, RegLocation rlIndex,
                         RegLocation rlDest, int scale)
